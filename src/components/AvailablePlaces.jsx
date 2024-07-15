@@ -1,29 +1,25 @@
 import { useEffect, useState } from "react";
 import Places from "./Places.jsx";
-
+import { getData } from "../http.js";
 export default function AvailablePlaces({ onSelectPlace }) {
   const [availablePlaces, setAvailablePlaces] = useState([]);
   const [isShowLoading, setIsShowLoading] = useState(true);
   const [isError, setIsError] = useState(null);
   useEffect(() => {
-    async function getData() {
+    async function fetchPlaces() {
+      setIsShowLoading(true);
       try {
-        setIsShowLoading(true);
-        const response = await fetch("http://localhost:3000/places");
-        const resData = await response.json();
-
-        if (!response.ok) {
-          throw new Error("failed to fetch places ");
-        }
-        setAvailablePlaces(resData.places);
-      } catch (error) {
-        setIsError(error);
+        const places = await getData();
+        setAvailablePlaces(places);
+        setIsShowLoading(false);
+      } catch (err) {
+        console.log(err);
+        setIsError(err);
+        setIsShowLoading(false);
       }
-
-      setIsShowLoading(false);
     }
 
-    getData();
+    fetchPlaces();
 
     //   setIsShowLoading(true);
     //   fetch("http://localhost:3000/placess")
